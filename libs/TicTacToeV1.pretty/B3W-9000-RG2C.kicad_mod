@@ -1,14 +1,14 @@
-(footprint "B3W9000RG2C" (version 20211014) (generator pcbnew)
+(footprint "B3W-9000-RG2C" (version 20211014) (generator pcbnew)
   (layer "F.Cu")
   (tedit 0)
-  (descr "B3W-9000-RG2C-1")
+  (descr "B3W-9000-RG2C")
   (tags "Switch")
   (attr through_hole)
   (fp_text reference "S**" (at -3.25 -2.25) (layer "F.SilkS")
     (effects (font (size 1.27 1.27) (thickness 0.254)))
     (tstamp 12c1dfbd-b335-4595-bebd-5cdcb8654197)
   )
-  (fp_text value "B3W9000RG2C" (at -3.25 -2.25) (layer "F.SilkS") hide
+  (fp_text value "B3W-9000-RG2C" (at -3.25 -2.25) (layer "F.SilkS") hide
     (effects (font (size 1.27 1.27) (thickness 0.254)))
     (tstamp 79c328ed-d47e-4342-a4f3-f305283451d9)
   )
@@ -42,9 +42,9 @@
   (pad "A2" thru_hole circle (at -3.25 1.35) (size 1.5 1.5) (drill 1) (layers *.Cu *.Mask) (tstamp c7d808bc-9179-4be8-95e0-a6c80dbba4c2))
   (pad "K1" thru_hole circle (at 0.35 -2.25) (size 1.5 1.5) (drill 1) (layers *.Cu *.Mask) (tstamp 81cd0b1f-0033-4c43-b14d-51c19fc385a6))
   (pad "K2" thru_hole circle (at -6.85 -2.25) (size 1.5 1.5) (drill 1) (layers *.Cu *.Mask) (tstamp b39bade3-f46e-4de9-a6dc-2fa523fc4224))
-  (model "B3W-9000-RG2C.stp"
-    (offset (xyz 0 0 0))
-    (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
+  (model "${KIPRJMOD}/libs/3dmodels/B3W-9000-RG2C.stp"
+    (offset (xyz -3.25 2.25 -5))
+    (scale (xyz 1 0.9 1))
+    (rotate (xyz -90 0 90))
   )
 )
