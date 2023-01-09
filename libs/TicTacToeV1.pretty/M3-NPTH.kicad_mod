@@ -1,0 +1,18 @@
+(footprint "M3-NPTH" (version 20211014) (generator pcbnew)
+  (layer "F.Cu")
+  (tedit 0)
+  (attr smd)
+  (fp_text reference "REF**" (at 0 -7.62 unlocked) (layer "F.SilkS") hide
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 2d643e69-c8f6-4698-a64d-67eec4ea1af4)
+  )
+  (fp_text value "M3-NPTH" (at 0 -2.54 unlocked) (layer "F.Fab")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp ab37adf4-d32f-4115-b193-e6fb922c6462)
+  )
+  (fp_text user "${REFERENCE}" (at 0 -5.08 unlocked) (layer "F.Fab") hide
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 99cd0916-ae13-4861-a5d4-9ce7ae73e659)
+  )
+  (pad "" np_thru_hole circle (at 0 0) (size 3.4 3.4) (drill 3.4) (layers *.Mask) (tstamp a445446d-a093-486f-a249-98aeccfc56c0))
+)
