@@ -7,10 +7,12 @@ This is a project to make a Tic-Tac-Toe game based on Arduino Nano.
  * The PCB has been designed with [KiCAD 6.0.10](https://www.kicad.org/).
  * The KiCAD project is available in [KiCAD/](KiCAD/) directory.
 
-<img src="images/PCB_front.png" width="20%" height="20%" />
-<img src="images/PCB_back.png" width="20%" height="20%" />
-<img src="images/PCB_front_with_parts.png" width="20%" height="20%" />
-<img src="images/PCB_isometric_with_parts.png" width="20%" height="20%" />
+<p float="left">
+    <img src="images/PCB_front.png" width="20%" height="20%" />
+    <img src="images/PCB_back.png" width="20%" height="20%" />
+    <img src="images/PCB_front_with_parts.png" width="20%" height="20%" />
+    <img src="images/PCB_isometric_with_parts.png" width="20%" height="20%" />
+</p>
  
 ## Arduino
 
