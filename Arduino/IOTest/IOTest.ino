@@ -1,3 +1,29 @@
+/*
+ *    IOTest.ino - An Arduino Nano program to test input and output for Tic-Tac-Toe V1.
+ *    Copyright (c) 2023 Takashi Nakamoto
+ * 
+ *    Permission is hereby granted, free of charge, to any person
+ *    obtaining a copy of this software and associated documentation
+ *    files (the "Software"), to deal in the Software without
+ *    restriction, including without limitation the rights to use,
+ *    copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *    copies of the Software, and to permit persons to whom the
+ *    Software is furnished to do so, subject to the following
+ *    conditions:
+ * 
+ *    This permission notice shall be included in all copies or 
+ *    substantial portions of the Software.
+ * 
+ *    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *    OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 #include "LedControl.h"
 
 const int RESET_BUTTON           = 2;
@@ -65,7 +91,7 @@ void setup() {
 
   // Set up MAX7219.
   leds.shutdown(0, false);
-  leds.setIntensity(0, 8);
+  leds.setIntensity(0, 12);
   leds.clearDisplay(0);
 }
 
@@ -102,12 +128,43 @@ void loop() {
   }
 
   // Flash LEDs.
-  if (loop_count % 2 == 0) {
-    leds.setRow(0, 0, B00000000);
-    Serial.println("OFF");
-  } else {
+  leds.clearDisplay(0);
+  if (loop_count % 9 == 0) {
+    // Turn on RED on S1 and GREEN on S9.
     leds.setRow(0, 0, B01000000);
-    Serial.println("ON");
+    leds.setRow(0, 5, B00000010);
+  } else if (loop_count % 9 == 1) {
+    // Turn on RED on S2 and GREEN on S1.
+    leds.setRow(0, 0, B00100000);
+    leds.setRow(0, 3, B00001000);
+  } else if (loop_count % 9 == 2) {
+    // Turn on RED on S3 and GREEN on S2.
+    leds.setRow(0, 0, B00010000);
+    leds.setRow(0, 3, B00000100);
+  } else if (loop_count % 9 == 3) {
+    // Turn on RED on S4 and GREEN on S3.
+    leds.setRow(0, 1, B01000000);
+    leds.setRow(0, 3, B00000010);
+  } else if (loop_count % 9 == 4) {
+    // Turn on RED on S5 and GREEN on S4.
+    leds.setRow(0, 1, B00100000);
+    leds.setRow(0, 4, B00001000);
+  } else if (loop_count % 9 == 5) {
+    // Turn on RED on S6 and GREEN on S5.
+    leds.setRow(0, 1, B00010000);
+    leds.setRow(0, 4, B00000100);
+  } else if (loop_count % 9 == 6) {
+    // Turn on RED on S7 and GREEN on S6.
+    leds.setRow(0, 2, B01000000);
+    leds.setRow(0, 4, B00000010);
+  } else if (loop_count % 9 == 7) {
+    // Turn on RED on S8 and GREEN on S7.
+    leds.setRow(0, 2, B00100000);
+    leds.setRow(0, 5, B00001000);
+  } else if (loop_count % 9 == 8) {
+    // Turn on RED on S9 and GREEN on S8.
+    leds.setRow(0, 2, B00010000);
+    leds.setRow(0, 5, B00000100);
   }
 
   Serial.println("-----");
