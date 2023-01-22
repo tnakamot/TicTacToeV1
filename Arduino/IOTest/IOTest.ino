@@ -1,3 +1,5 @@
+#include "LedControl.h"
+
 const int RESET_BUTTON           = 2;
 const int RESET_BUTTON_GREEN_LED = 3;
 const int RESET_BUTTON_RED_LED   = 4;
@@ -6,10 +8,16 @@ const int MAIN_BUTTONS_INPUT_LOAD      = 8;
 const int MAIN_BUTTONS_INPUT_CLOCK     = 7;
 const int MAIN_BUTTONS_INPUT_DATA      = 6;
 
+const int MAX7219_CLK  = 11;
+const int MAX7219_LOAD = 10;
+const int MAX7219_DIN  = 9;
+
 int loop_count = 0;
 int reset_button_state = 0;
 
 uint16_t main_buttons_state = 0;
+
+LedControl leds = LedControl(MAX7219_DIN, MAX7219_CLK, MAX7219_LOAD, 1);
 
 // Read the state of the main nine buttons from the daisy-chained
 //two 74HC165 shift registers.
@@ -49,11 +57,16 @@ void setup() {
   pinMode(RESET_BUTTON_GREEN_LED, OUTPUT);
   pinMode(RESET_BUTTON_RED_LED,   OUTPUT);
 
-  // Digital I/O setup for the shift register 74HC165 that
+  // Pin configuraiton for the shift register 74HC165 that
   // reads the states of the main nine buttons.
   pinMode(MAIN_BUTTONS_INPUT_LOAD,  OUTPUT);
   pinMode(MAIN_BUTTONS_INPUT_CLOCK, OUTPUT);
   pinMode(MAIN_BUTTONS_INPUT_DATA,  INPUT);
+
+  // Set up MAX7219.
+  leds.shutdown(0, false);
+  leds.setIntensity(0, 8);
+  leds.clearDisplay(0);
 }
 
 void loop() {
@@ -69,7 +82,7 @@ void loop() {
     Serial.println("Reset button: low");
   }
 
-  // Flush LEDs in the reset button.
+  // Flash LEDs in the reset button.
   if (loop_count % 2 == 0) {
     digitalWrite(RESET_BUTTON_GREEN_LED, HIGH);
     digitalWrite(RESET_BUTTON_RED_LED,   LOW);
@@ -87,6 +100,16 @@ void loop() {
     Serial.println(bitRead(main_buttons_state, i) ? "high" : "low");
     
   }
+
+  // Flash LEDs.
+  if (loop_count % 2 == 0) {
+    leds.setRow(0, 0, B00000000);
+    Serial.println("OFF");
+  } else {
+    leds.setRow(0, 0, B01000000);
+    Serial.println("ON");
+  }
+
   Serial.println("-----");
 
   delay(1000);
