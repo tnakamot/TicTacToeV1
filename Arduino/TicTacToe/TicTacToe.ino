@@ -151,11 +151,11 @@ void setup() {
 /* ===================================================================
  * play()
  *
- * Sub loop in which the program basically waits for the user inputs,
- * and move forward the game play based on the inputs.
+ * Sub loop in which the program continuously waits for the user
+ * inputs, and move forward the game play based on the input.
  *
  * This function returns the next state the main programs should 
- * transition to next.
+ * transition to.
  * =================================================================== */
 MainState play() {
   enum {RED, GREEN} turn = RED;
