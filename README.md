@@ -15,8 +15,8 @@ This is a project to make a Tic-Tac-Toe game based on Arduino Nano.
 </p>
 
 <p float="left">
-    <img src="images/PCB_manufactured_front.jpg" width="33%" height="33%" />
-    <img src="images/PCB_manufactured_back.jpg" width="33%" height="33%" />
+    <img src="images/PCB_manufactured_front.jpg" width="20%" height="20%" />
+    <img src="images/PCB_manufactured_back.jpg" width="20%" height="20%" />
 </p>
 
  
