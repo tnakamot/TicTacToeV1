@@ -27,7 +27,7 @@ arduino-cli.exe:
 	rm ${ARDUINO_CLI_WIN64_ZIP}
 
 .PHONY: compile
-compile:
+compile: ${ARDUINO_CLI_BIN}
 	${ARDUINO_CLI_BIN} compile --verbose --output-dir "${BUILD_PATH}" --fqbn ${FQBN} "${SRC_PATH}"
 	@echo "Generated binary files in ${BUILD_DIR}"
 
