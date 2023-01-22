@@ -29,3 +29,5 @@ upload: compile
 .PHONY: clean
 clean:
 	rm -rf ${BUILD_DIR}
+
+.DEFAULT_GOAL := upload
