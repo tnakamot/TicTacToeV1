@@ -11,12 +11,6 @@ int reset_button_state = 0;
 
 uint16_t main_buttons_state = 0;
 
-void printBin(uint16_t b) {
-  for (int i = 15; i >= 0; i--) {
-    Serial.write(bitRead(b, i) ? '1' : '0');
-  }
-}
-
 // Read the state of the main nine buttons from the daisy-chained
 //two 74HC165 shift registers.
 uint16_t readMainButtonsState()
@@ -86,8 +80,14 @@ void loop() {
 
   // Read the state of the main nine buttons.
   main_buttons_state = readMainButtonsState();
-  printBin(main_buttons_state);
-  Serial.println("");
+  for (int i = 0; i < 9; i++) {
+    Serial.print("S");
+    Serial.print(i + 1);
+    Serial.print(" : ");
+    Serial.println(bitRead(main_buttons_state, i) ? "high" : "low");
+    
+  }
+  Serial.println("-----");
 
   delay(1000);
 }
