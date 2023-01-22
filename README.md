@@ -21,6 +21,6 @@ This is a project to make a Tic-Tac-Toe game based on Arduino Nano.
  * Analog Devices MAX7219
    * [Product webpage at Analog Devices](https://www.analog.com/en/products/max7219.html)
    * [Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX7219-MAX7221.pdf)
-   * [LedControl An Arduino library for the MAX7219 and MAX7221](http://wayoda.github.io/LedControl/index.html)
+   * [LedControl - An Arduino library for the MAX7219 and MAX7221](http://wayoda.github.io/LedControl/index.html)
      * This program uses this library to control MAX7219.
      * The page above also explains how to wire up LEDs to MAX7219.
