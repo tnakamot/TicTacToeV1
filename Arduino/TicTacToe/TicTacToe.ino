@@ -103,7 +103,7 @@ uint16_t readMainButtonsRawState()
 }
 
 /* ===================================================================
- * readMainButtonsState()
+ * readButtonsRawState()
  *
  * This function reads the press/release state of all buttons
  * (S1 - S10).
@@ -120,7 +120,7 @@ uint16_t readMainButtonsRawState()
  * =================================================================== */
 uint16_t readButtonsRawState() {
   uint16_t state = readMainButtonsRawState();
-  bitWrite(state, 9, digitalRead(RESET_BUTTON));
+  bitWrite(state, 9, digitalRead(RESET_BUTTON) == HIGH ? 0 : 1);
   return state;
 }
 
@@ -130,7 +130,7 @@ uint16_t readButtonsRawState() {
  * This function reads the press/release state of all buttons
  * (S1 - S10). Only the buttons that have been pressed more than
  * five milliseconds are considered pressed. This function effectively
- * remove the bouncing effect.
+ * removes the bouncing effect.
  *
  * bitRead(state, i) represents the press/release state of the S(i+1)
  * button where "state" is the value returned by this function. If it
@@ -147,6 +147,24 @@ uint16_t readButtonsState() {
   delay(10);
   uint16_t state2 = readMainButtonsRawState();
   return state1 & state2;
+}
+
+/* ===================================================================
+ * readResetButtonsState()
+ *
+ * This function reads the press/release state of the reset button
+ * (S10). This function effectively removes the bouncing effect.
+ * =================================================================== */
+int readButtonsState() {
+  int state1 = digitalRead(RESET_BUTTON);
+  delay(10);
+  int state2 = digitalRead(RESET_BUTTON);
+
+  if (state1 == LOW && state2 == LOW) {
+    return HIGH;
+  } else {
+    return LOW;
+  }
 }
 
 /* ===================================================================
@@ -227,8 +245,6 @@ MainState evaluateTerritory() {
     Serial.println("GREEN_WIN!!!");
     return GREEN_WIN;
   }
-
-  
 
   // Judge if the play can continue.
   for (int row = 0; row < 3; row++) {
