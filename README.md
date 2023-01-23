@@ -19,7 +19,7 @@ The pictures below show the PCB manufactured by [OSHPARK](https://oshpark.com/).
 <p float="left">
     <img src="images/PCB_manufactured_front.jpg" width="20%" height="20%" />
     <img src="images/PCB_manufactured_back.jpg" width="20%" height="20%" />
-    <img src="images/PCB_manufactured_isometric_front_with_parts.JPG" width="20%" height="20%" />
+    <img src="images/PCB_manufactured_isometric_front_with_parts.JPG" width="33%" height="33%" />
 </p>
  
 ## Software
