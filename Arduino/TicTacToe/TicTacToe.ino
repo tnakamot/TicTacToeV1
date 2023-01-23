@@ -210,7 +210,7 @@ void setup() {
  * transition to.
  * =================================================================== */
 MainState play() {
-  enum {RED, GREEN} turn = RED;
+  enum PlayTurn {RED_TURN, GREEN_TURN} turn = RED_TURN;
   uint16_t buttons_state = 0;
 
   /*
@@ -229,22 +229,31 @@ MainState play() {
     uint16_t buttons_state_changed = buttons_state ^ buttons_state_new;
     buttons_state = buttons_state_new;
 
-    for (int i = 0; i < 10; i++) {
+    if (bitRead(buttons_state_changed, 9) && !bitRead(buttons_state_new, 9)) {
+      // Handle the release event of the reset button (S10 button).
+
+      // TODO: implement.
+    }
+
+    for (int i = 0; i < 9; i++) {
       if (bitRead(buttons_state_changed, i) && !bitRead(buttons_state_new, i)) {
+        // Handle the release event of the S1 - S9 buttons.
         int row = i / 3;
         int col = i % 3;
 
-        Serial.print("S");
-        Serial.print(i + 1);
-        Serial.print(" (row: ");
-        Serial.print(row + 1);
-        Serial.print(" , col: ");
-        Serial.print(col + 1);
-        Serial.println(") ===>>> RELEASED!");
+        if (territory_state[row][col] == NONE) {
+          if (turn == RED_TURN) {
+            territory_state[row][col] = RED;
+            turn = GREEN_TURN;
+          } else {
+            territory_state[row][col] = GREEN;
+            turn = RED_TURN;
+          }
+        }
       }
     }
     
-    //delay(1000);
+    drawTerritory();
   }
 }
 
