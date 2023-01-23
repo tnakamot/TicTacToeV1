@@ -55,6 +55,9 @@ const int32_t SERIAL_BAUD_RATE = 57600;
 // A variable to hold the main state of this program.
 enum MainState { START, PLAYING, RED_WIN, GREEN_WIN } main_state = START;
 
+// A variable to hold the territory state.
+enum TerritoryState {RED, GREEN, NONE} territory_state[3][3];
+
 // An object that represents the LED controller (MAX7219).
 LedControl leds = LedControl(MAX7219_DIN, MAX7219_CLK, MAX7219_LOAD, 1);
 
@@ -141,9 +144,33 @@ uint16_t readButtonsRawState() {
  * =================================================================== */
 uint16_t readButtonsState() {
   uint16_t state1 = readMainButtonsRawState();
-  delay(5);
+  delay(10);
   uint16_t state2 = readMainButtonsRawState();
   return state1 & state2;
+}
+
+/* ===================================================================
+ * drawTerritory()
+ *
+ * Turn on/off red and green LEDs of S1 - S9 based on the 
+ * territory_state global variable.
+ */
+void drawTerritory() {
+  for (int row = 0; row < 3; row++) {
+    byte red_row = 0;
+    byte green_row = 0;
+    
+    for (int col = 0; col < 3; col++) {
+      if (territory_state[row][col] == RED) {
+        red_row = red_row | (B01000000 >> col);
+      } else if (territory_state[row][col] == GREEN) {
+        green_row = green_row | (B00001000 >> col);
+      }
+    }
+
+    leds.setRow(0, row, red_row);
+    leds.setRow(0, row + 3, green_row);
+  }
 }
 
 /* ===================================================================
@@ -185,6 +212,16 @@ void setup() {
 MainState play() {
   enum {RED, GREEN} turn = RED;
   uint16_t buttons_state = 0;
+
+  /*
+   * Initialize the territory.
+   */
+  for (int row = 0; row < 3; row++) {
+    for (int col = 0; col < 3; col++) {
+      territory_state[row][col] = NONE;
+    }
+  }
+  drawTerritory();
   
   while (true) {
     // Detect the button state change (pressed or released).
@@ -193,11 +230,17 @@ MainState play() {
     buttons_state = buttons_state_new;
 
     for (int i = 0; i < 10; i++) {
-      if (bitRead(buttons_state_changed, i)) {
+      if (bitRead(buttons_state_changed, i) && !bitRead(buttons_state_new, i)) {
+        int row = i / 3;
+        int col = i % 3;
+
         Serial.print("S");
         Serial.print(i + 1);
-        Serial.print(" : ");
-        Serial.println(bitRead(buttons_state, i) ? "PRESSED" : "released");
+        Serial.print(" (row: ");
+        Serial.print(row + 1);
+        Serial.print(" , col: ");
+        Serial.print(col + 1);
+        Serial.println(") ===>>> RELEASED!");
       }
     }
     
