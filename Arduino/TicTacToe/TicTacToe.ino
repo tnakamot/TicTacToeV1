@@ -143,9 +143,9 @@ uint16_t readButtonsRawState() {
  *   Serial.println( bitRead(state, 9) ? "Button S10 is pressed." : "Button S10 is released." );
  * =================================================================== */
 uint16_t readButtonsState() {
-  uint16_t state1 = readMainButtonsRawState();
+  uint16_t state1 = readButtonsRawState();
   delay(10);
-  uint16_t state2 = readMainButtonsRawState();
+  uint16_t state2 = readButtonsRawState();
   return state1 & state2;
 }
 
@@ -255,7 +255,6 @@ MainState evaluateTerritory() {
     }
   }
 
-  Serial.println("DRAW!!!");
   return DRAW;
 }
 
@@ -316,9 +315,9 @@ MainState play() {
     buttons_state = buttons_state_new;
 
     if (bitRead(buttons_state_changed, 9) && !bitRead(buttons_state_new, 9)) {
-      // Handle the release event of the reset button (S10 button).
-
-      // TODO: implement.
+      // The reset button (S10 button) was pressed and released.
+      // Reset the game.
+      return START;
     }
 
     for (int i = 0; i < 9; i++) {
