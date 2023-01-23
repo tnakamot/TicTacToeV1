@@ -204,22 +204,18 @@ MainState evaluateTerritory() {
     if (territory_state[0][i] == RED &&
         territory_state[1][i] == RED &&
         territory_state[2][i] == RED) {
-      Serial.println("RED_WIN!!!");
       return RED_WIN;
     } else if (territory_state[i][0] == RED &&
                territory_state[i][1] == RED &&
                territory_state[i][2] == RED) {
-      Serial.println("RED_WIN!!!");
       return RED_WIN;
     } else if (territory_state[0][i] == GREEN &&
                territory_state[1][i] == GREEN &&
                territory_state[2][i] == GREEN) {
-      Serial.println("GREEN_WIN!!!");
       return GREEN_WIN;
     } else if (territory_state[i][0] == GREEN &&
                territory_state[i][1] == GREEN &&
                territory_state[i][2] == GREEN) {
-      Serial.println("GREEN_WIN!!!");
       return GREEN_WIN;
     }
   }
@@ -227,22 +223,18 @@ MainState evaluateTerritory() {
   if (territory_state[0][0] == RED &&
       territory_state[1][1] == RED &&
       territory_state[2][2] == RED) {
-    Serial.println("RED_WIN!!!");
     return RED_WIN;
   } else if (territory_state[0][2] == RED &&
              territory_state[1][1] == RED &&
              territory_state[2][0] == RED) {
-    Serial.println("RED_WIN!!!");
     return RED_WIN;
   } else if (territory_state[0][0] == GREEN &&
              territory_state[1][1] == GREEN &&
              territory_state[2][2] == GREEN) {
-    Serial.println("GREEN_WIN!!!");
     return GREEN_WIN;
   } else if (territory_state[0][2] == GREEN &&
              territory_state[1][1] == GREEN &&
              territory_state[2][0] == GREEN) {
-    Serial.println("GREEN_WIN!!!");
     return GREEN_WIN;
   }
 
@@ -266,7 +258,7 @@ MainState evaluateTerritory() {
  * =================================================================== */
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
-  Serial.println("setup");
+  Serial.println("TicTacToeV1");
 
   // Digital I/O pin setup for the reset button and its LEDs.
   pinMode(RESET_BUTTON,           INPUT);
@@ -353,7 +345,8 @@ MainState play() {
  * draw()
  *
  * Sub loop in which the program continuously waits until the reset
- * button is pressed and released.
+ * button is pressed and released. Flash the reset button during that
+ * time.
  * =================================================================== */
 void draw() {
   drawTerritory();
@@ -386,6 +379,45 @@ void draw() {
   }
 }
 
+/* ===================================================================
+ * win()
+ *
+ * Sub loop in which the program continuously waits until the reset
+ * button is pressed and released. Flash the reset button during
+ * that time.
+ * =================================================================== */
+void win(int red) {
+  drawTerritory();
+
+  int reset_button_state = 0;
+  int count = 0;
+
+  while (true) {
+    int reset_button_state_new = readResetButtonState();
+    int reset_button_state_changed = reset_button_state ^ reset_button_state_new;
+    reset_button_state = reset_button_state_new;
+
+    if (reset_button_state_changed && !reset_button_state_new) {
+      // The reset button was released. Finish this function.
+      return;
+    }
+
+    // Flash the reset button.
+    count = count + 1;
+    if (count == 1) {
+      if (red) {
+        digitalWrite(RESET_BUTTON_RED_LED, HIGH);
+      } else {
+        digitalWrite(RESET_BUTTON_GREEN_LED, HIGH);
+      }
+    } else if (count == 15) {
+      digitalWrite(RESET_BUTTON_RED_LED, LOW);
+      digitalWrite(RESET_BUTTON_GREEN_LED, LOW);
+    } else if (count == 30) {
+      count = 0;
+    }
+  }
+}
 
 /* ===================================================================
  * loop()
@@ -405,25 +437,12 @@ void loop() {
   } else if (main_state == PLAYING) {
     main_state = play();
   } else if (main_state == RED_WIN) {
-    // TODO: implement    
-    drawTerritory();
-    digitalWrite(RESET_BUTTON_RED_LED, HIGH);
-    
-    // TODO: wait until the reset button is pressed
-    delay(3000);
+    win(1);
     main_state = START;
   } else if (main_state == GREEN_WIN) {
-    // TODO: implement
-    drawTerritory();
-    digitalWrite(RESET_BUTTON_GREEN_LED, HIGH);
-
-    // TODO: wait until the reset button is pressed
-    delay(3000);
+    win(0);
     main_state = START;
   } else if (main_state == DRAW) {
-    // TODO: implement
-    drawTerritory();
-
     draw();
     main_state = START;
   } else {
