@@ -53,7 +53,7 @@ const int32_t SERIAL_BAUD_RATE = 57600;
  * =================================================================== */
 
 // A variable to hold the main state of this program.
-enum MainState { START, PLAYING, RED_WIN, GREEN_WIN } main_state = START;
+enum MainState { START, PLAYING, RED_WIN, GREEN_WIN, DRAW } main_state = START;
 
 // A variable to hold the territory state.
 enum TerritoryState {RED, GREEN, NONE} territory_state[3][3];
@@ -154,7 +154,7 @@ uint16_t readButtonsState() {
  *
  * Turn on/off red and green LEDs of S1 - S9 based on the 
  * territory_state global variable.
- */
+ * =================================================================== */
 void drawTerritory() {
   for (int row = 0; row < 3; row++) {
     byte red_row = 0;
@@ -171,6 +171,76 @@ void drawTerritory() {
     leds.setRow(0, row, red_row);
     leds.setRow(0, row + 3, green_row);
   }
+}
+
+/* ===================================================================
+ * evaluateTerritory()
+ *
+ * Evaluate the territory and returns if the red play wins (RED_WIN),
+ * the green play wins (GREEN_WIN), draw because all territories are
+ * populated (DRAW) or the game can continue (PLAYING).
+ * =================================================================== */
+MainState evaluateTerritory() {
+  // Judge if the red or green player wins
+  for (int i = 0; i < 3; i++) {
+    if (territory_state[0][i] == RED &&
+        territory_state[1][i] == RED &&
+        territory_state[2][i] == RED) {
+      Serial.println("RED_WIN!!!");
+      return RED_WIN;
+    } else if (territory_state[i][0] == RED &&
+               territory_state[i][1] == RED &&
+               territory_state[i][2] == RED) {
+      Serial.println("RED_WIN!!!");
+      return RED_WIN;
+    } else if (territory_state[0][i] == GREEN &&
+               territory_state[1][i] == GREEN &&
+               territory_state[2][i] == GREEN) {
+      Serial.println("GREEN_WIN!!!");
+      return GREEN_WIN;
+    } else if (territory_state[i][0] == GREEN &&
+               territory_state[i][1] == GREEN &&
+               territory_state[i][2] == GREEN) {
+      Serial.println("GREEN_WIN!!!");
+      return GREEN_WIN;
+    }
+  }
+
+  if (territory_state[0][0] == RED &&
+      territory_state[1][1] == RED &&
+      territory_state[2][2] == RED) {
+    Serial.println("RED_WIN!!!");
+    return RED_WIN;
+  } else if (territory_state[0][2] == RED &&
+             territory_state[1][1] == RED &&
+             territory_state[2][0] == RED) {
+    Serial.println("RED_WIN!!!");
+    return RED_WIN;
+  } else if (territory_state[0][0] == GREEN &&
+             territory_state[1][1] == GREEN &&
+             territory_state[2][2] == GREEN) {
+    Serial.println("GREEN_WIN!!!");
+    return GREEN_WIN;
+  } else if (territory_state[0][2] == GREEN &&
+             territory_state[1][1] == GREEN &&
+             territory_state[2][0] == GREEN) {
+    Serial.println("GREEN_WIN!!!");
+    return GREEN_WIN;
+  }
+
+  
+
+  // Judge if the play can continue.
+  for (int row = 0; row < 3; row++) {
+    for (int col = 0; col < 3; col++) {
+      if (territory_state[row][col] == NONE) {
+        return PLAYING;
+      }
+    }
+  }
+
+  Serial.println("DRAW!!!");
+  return DRAW;
 }
 
 /* ===================================================================
@@ -241,6 +311,8 @@ MainState play() {
         int row = i / 3;
         int col = i % 3;
 
+        // If the button has not been activated yet, turn the
+        // color of that territory.
         if (territory_state[row][col] == NONE) {
           if (turn == RED_TURN) {
             territory_state[row][col] = RED;
@@ -249,6 +321,11 @@ MainState play() {
             territory_state[row][col] = GREEN;
             turn = RED_TURN;
           }
+        }
+
+        MainState result = evaluateTerritory();
+        if (result != PLAYING) {
+          return result;
         }
       }
     }
@@ -275,9 +352,28 @@ void loop() {
   } else if (main_state == PLAYING) {
     main_state = play();
   } else if (main_state == RED_WIN) {
-    // TODO: implement
-  } else if (main_state == GREEN_WIN) {
     // TODO: implement    
+    drawTerritory();
+    digitalWrite(RESET_BUTTON_RED_LED, HIGH);
+    
+    // TODO: wait until the reset button is pressed
+    delay(3000);
+    main_state = START;
+  } else if (main_state == GREEN_WIN) {
+    // TODO: implement
+    drawTerritory();
+    digitalWrite(RESET_BUTTON_GREEN_LED, HIGH);
+
+    // TODO: wait until the reset button is pressed
+    delay(3000);
+    main_state = START;
+  } else if (main_state == DRAW) {
+    // TODO: implement
+    drawTerritory();
+
+    // TODO: wait until the reset button is pressed
+    delay(3000);
+    main_state = START;
   } else {
     // This is an unknown state.
     // Flush the LEDs and wait until the user presses the reset button.
