@@ -59,7 +59,7 @@ enum MainState { START, PLAYING, RED_WIN, GREEN_WIN } main_state = START;
 LedControl leds = LedControl(MAX7219_DIN, MAX7219_CLK, MAX7219_LOAD, 1);
 
 /* ===================================================================
- * readMainButtonsState()
+ * readMainButtonsRawState()
  *
  * This function read the state of the main nine buttons (S1 - S9)
  * from the daisy-chained two 74HC165 shift registers.
@@ -69,10 +69,10 @@ LedControl leds = LedControl(MAX7219_DIN, MAX7219_CLK, MAX7219_LOAD, 1);
  * is 1, it means that the button is currently pressed.
  *
  * Example:
- *   uint16_t state = readMainButtonsState();
+ *   uint16_t state = readMainButtonsRawState();
  *   Serial.println( bitRead(state, 0) ? "Button S1 is pressed." : "Button S1 is released." );
  * =================================================================== */
-uint16_t readMainButtonsState()
+uint16_t readMainButtonsRawState()
 {
   uint16_t state = 0;
 
@@ -110,15 +110,40 @@ uint16_t readMainButtonsState()
  * is 1, it means that the button is currently pressed.
  *
  * Example:
- *   uint16_t state = readMainButtonsState();
+ *   uint16_t state = readButtonsRawState();
+ *   Serial.println( bitRead(state, 0) ? "Button S1 is pressed." : "Button S1 is released." );
+ *   Serial.println( bitRead(state, 1) ? "Button S2 is pressed." : "Button S2 is released." );
+ *   Serial.println( bitRead(state, 9) ? "Button S10 is pressed." : "Button S10 is released." );
+ * =================================================================== */
+uint16_t readButtonsRawState() {
+  uint16_t state = readMainButtonsRawState();
+  bitWrite(state, 9, digitalRead(RESET_BUTTON));
+  return state;
+}
+
+/* ===================================================================
+ * readMainButtonsState()
+ *
+ * This function reads the press/release state of all buttons
+ * (S1 - S10). Only the buttons that have been pressed more than
+ * five milliseconds are considered pressed. This function effectively
+ * remove the bouncing effect.
+ *
+ * bitRead(state, i) represents the press/release state of the S(i+1)
+ * button where "state" is the value returned by this function. If it
+ * is 1, it means that the button is currently pressed.
+ *
+ * Example:
+ *   uint16_t state = readButtonsState();
  *   Serial.println( bitRead(state, 0) ? "Button S1 is pressed." : "Button S1 is released." );
  *   Serial.println( bitRead(state, 1) ? "Button S2 is pressed." : "Button S2 is released." );
  *   Serial.println( bitRead(state, 9) ? "Button S10 is pressed." : "Button S10 is released." );
  * =================================================================== */
 uint16_t readButtonsState() {
-  uint16_t state = readMainButtonsState();
-  bitWrite(state, 9, digitalRead(RESET_BUTTON));
-  return state;
+  uint16_t state1 = readMainButtonsRawState();
+  delay(5);
+  uint16_t state2 = readMainButtonsRawState();
+  return state1 & state2;
 }
 
 /* ===================================================================
@@ -159,18 +184,24 @@ void setup() {
  * =================================================================== */
 MainState play() {
   enum {RED, GREEN} turn = RED;
+  uint16_t buttons_state = 0;
   
   while (true) {
-    uint16_t buttons_state = readButtonsState();
-    
-    for (int i = 0; i < 10; i++) {
-      Serial.print("S");
-      Serial.print(i + 1);
-      Serial.print(" : ");
-      Serial.println(bitRead(buttons_state, i) ? "PRESSED" : "released");
-    }
+    // Detect the button state change (pressed or released).
+    uint16_t buttons_state_new = readButtonsState();
+    uint16_t buttons_state_changed = buttons_state ^ buttons_state_new;
+    buttons_state = buttons_state_new;
 
-    delay(1000);
+    for (int i = 0; i < 10; i++) {
+      if (bitRead(buttons_state_changed, i)) {
+        Serial.print("S");
+        Serial.print(i + 1);
+        Serial.print(" : ");
+        Serial.println(bitRead(buttons_state, i) ? "PRESSED" : "released");
+      }
+    }
+    
+    //delay(1000);
   }
 }
 
