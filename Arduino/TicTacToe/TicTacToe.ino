@@ -392,6 +392,51 @@ void win(int red) {
   int reset_button_state = 0;
   int count = 0;
 
+  int coord_to_flash[3][2];
+  TerritoryState win_state = red ? RED : GREEN;
+
+  for (int i = 0; i < 3; i++) {
+    if (territory_state[0][i] == win_state &&
+        territory_state[1][i] == win_state &&
+        territory_state[2][i] == win_state) {
+      coord_to_flash[0][0] = 0;
+      coord_to_flash[0][1] = i;
+      coord_to_flash[1][0] = 1;
+      coord_to_flash[1][1] = i;
+      coord_to_flash[2][0] = 2;
+      coord_to_flash[2][1] = i;
+    } else if (territory_state[i][0] == win_state &&
+               territory_state[i][1] == win_state &&
+               territory_state[i][2] == win_state) {
+      coord_to_flash[0][0] = i;
+      coord_to_flash[0][1] = 0;
+      coord_to_flash[1][0] = i;
+      coord_to_flash[1][1] = 1;
+      coord_to_flash[2][0] = i;
+      coord_to_flash[2][1] = 2;
+    }
+  }
+
+  if (territory_state[0][0] == win_state &&
+      territory_state[1][1] == win_state &&
+      territory_state[2][2] == win_state) {
+      coord_to_flash[0][0] = 0;
+      coord_to_flash[0][1] = 0;
+      coord_to_flash[1][0] = 1;
+      coord_to_flash[1][1] = 1;
+      coord_to_flash[2][0] = 2;
+      coord_to_flash[2][1] = 2;
+  } else if (territory_state[0][2] == win_state &&
+             territory_state[1][1] == win_state &&
+             territory_state[2][0] == win_state) {
+      coord_to_flash[0][0] = 0;
+      coord_to_flash[0][1] = 2;
+      coord_to_flash[1][0] = 1;
+      coord_to_flash[1][1] = 1;
+      coord_to_flash[2][0] = 2;
+      coord_to_flash[2][1] = 0;
+  }
+
   while (true) {
     int reset_button_state_new = readResetButtonState();
     int reset_button_state_changed = reset_button_state ^ reset_button_state_new;
@@ -414,6 +459,29 @@ void win(int red) {
       digitalWrite(RESET_BUTTON_RED_LED, LOW);
       digitalWrite(RESET_BUTTON_GREEN_LED, LOW);
     } else if (count == 30) {
+      count = 0;
+    }
+
+    // Flash the territory.
+    if (count == 1) {
+      for (int i = 0; i < 3; i++) {
+        int row = coord_to_flash[i][0];
+        int col = coord_to_flash[i][1];
+
+        territory_state[row][col] = win_state;
+      }
+      drawTerritory();
+    } else if (count == 15) {
+      for (int i = 0; i < 3; i++) {
+        int row = coord_to_flash[i][0];
+        int col = coord_to_flash[i][1];
+
+        territory_state[row][col] = NONE;
+      }
+      drawTerritory();
+    }
+
+    if (count == 30) {
       count = 0;
     }
   }
