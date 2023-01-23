@@ -150,20 +150,20 @@ uint16_t readButtonsState() {
 }
 
 /* ===================================================================
- * readResetButtonsState()
+ * readResetButtonState()
  *
  * This function reads the press/release state of the reset button
  * (S10). This function effectively removes the bouncing effect.
  * =================================================================== */
-int readButtonsState() {
+int readResetButtonState() {
   int state1 = digitalRead(RESET_BUTTON);
   delay(10);
   int state2 = digitalRead(RESET_BUTTON);
 
   if (state1 == LOW && state2 == LOW) {
-    return HIGH;
+    return 1;
   } else {
-    return LOW;
+    return 0;
   }
 }
 
@@ -351,6 +351,44 @@ MainState play() {
 }
 
 /* ===================================================================
+ * draw()
+ *
+ * Sub loop in which the program continuously waits until the reset
+ * button is pressed and released.
+ * =================================================================== */
+void draw() {
+  drawTerritory();
+
+  int reset_button_state = 0;
+  int count = 0;
+
+  while (true) {
+    int reset_button_state_new = readResetButtonState();
+    int reset_button_state_changed = reset_button_state ^ reset_button_state_new;
+    reset_button_state = reset_button_state_new;
+
+    if (reset_button_state_changed && !reset_button_state_new) {
+      // The reset button was released. Finish this function.
+      return;
+    }
+
+    // Flash the reset button.
+    count = count + 1;
+    if (count == 1) {
+      digitalWrite(RESET_BUTTON_RED_LED, HIGH);
+    } else if (count == 10) {
+      digitalWrite(RESET_BUTTON_RED_LED, LOW);
+      digitalWrite(RESET_BUTTON_GREEN_LED, HIGH);
+    } else if (count == 20) {
+      digitalWrite(RESET_BUTTON_GREEN_LED, LOW);
+    } else if (count == 100) {
+      count = 0;
+    }
+  }
+}
+
+
+/* ===================================================================
  * loop()
  *
  * Main loop function which is called repeatedly one after another
@@ -387,8 +425,7 @@ void loop() {
     // TODO: implement
     drawTerritory();
 
-    // TODO: wait until the reset button is pressed
-    delay(3000);
+    draw();
     main_state = START;
   } else {
     // This is an unknown state.
