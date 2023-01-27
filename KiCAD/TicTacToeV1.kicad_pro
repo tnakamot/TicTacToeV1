@@ -422,8 +422,8 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
-      "vrml": ""
+      "step": "TicTacToeV1.step",
+      "vrml": "TicTacToeV1.wrl"
     },
     "page_layout_descr_file": ""
   },
