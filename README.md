@@ -48,3 +48,7 @@ The list below shows the parts that this project uses.
    * [LedControl - An Arduino library for the MAX7219 and MAX7221](http://wayoda.github.io/LedControl/index.html)
      * This program uses this library to control MAX7219.
      * The page above also explains how to wire up LEDs to MAX7219.
+     
+## License
+
+TBD
